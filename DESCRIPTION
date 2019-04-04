@@ -1,11 +1,11 @@
 Package: TBmisc
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Miscellaneous functions for working with biomedical data
 Version: 0.1.0
 Author: Tomas Bencomo
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Maintainer: Tomas Bencomo <tjbencomo@gmail.com>
+Description: Functions to easily access TCGA survival data from UCSC Xena.
+  Also include tools to handle mislabeled gene HGNC symbols.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
@@ -19,3 +19,5 @@ Imports:
     stringr,
     magrittr
 RoxygenNote: 6.1.1
+Suggests: 
+    testthat

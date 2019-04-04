@@ -41,7 +41,7 @@ check.genes <- function(original.symbol, chromosome) {
   report <- df %>%
     dplyr::left_join(results, by = c("hugo_symbol" = "x",
                               "chromosome" = "original.chromosome")) %>%
-    dplyr::mutate(predicted.symbol = case_when(
+    dplyr::mutate(predicted.symbol = dplyr::case_when(
       Approved == T ~ hugo_symbol,
       Approved == F & !is.na(Suggested.Symbol) ~ Suggested.Symbol,
       Approved == F & is.na(Suggested.Symbol) ~ hugo_symbol
