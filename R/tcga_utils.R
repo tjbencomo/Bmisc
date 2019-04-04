@@ -17,7 +17,6 @@ DEFAULT.CLINICAL.FILENAME <- 'TCGA.%s.sampleMap__%s_clinicalMatrix.gz'
 #' @param df Dataframe with patient info as columns and other data as rows
 #'
 #' @return Dataframe where each row is a patient and each column is some type of TCGA variable
-#' @export
 #'
 transpose.data <- function(df) {
   temp <- data.frame(t(df[-1]))
