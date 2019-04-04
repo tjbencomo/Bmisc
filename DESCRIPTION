@@ -14,4 +14,6 @@ Imports:
     HGNChelper,
     philentropy,
     dplyr,
-    tidyr
+    tidyr,
+    readr,
+    stringr

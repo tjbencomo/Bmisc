@@ -4,10 +4,7 @@
 # TCGA UCSC Xena data. Easily load multiple data modalities
 # for one or multiple cancers. Specify genes of interest
 # or load the entire data. It is expected the data files
-# follow the default naming template from Xena. 
-
-require(tidyverse)
-require(data.table)
+# follow the default naming template from Xena.
 
 # The naming templates used by XENA for each data type
 DEFAULT.RNASEQ.FILENAME <- 'TCGA.%s.sampleMap__HiSeqV2.gz'
@@ -27,8 +24,8 @@ transpose.data <- function(df) {
   temp <- data.frame(t(df[-1]))
   colnames(df)[1] <- 'Gene Symbol'
   colnames(temp) <- df %>% pull(`Gene Symbol`)
-  setDT(temp, keep.rownames = TRUE)
-  colnames(temp)[1] <- "sampleID" 
+  data.table::setDT(temp, keep.rownames = TRUE)
+  colnames(temp)[1] <- "sampleID"
   return(temp)
 }
 
@@ -50,14 +47,15 @@ load.rnaseq <- function(cancer, data.dir, genes = NULL, file = NULL) {
   } else {
     filepath.rna <- file.path(data.dir, file)
   }
-  rna.data <- read_delim(filepath.rna, "\t", 
-                         escape_double = FALSE, trim_ws = TRUE, 
+  rna.data <- readr::read_delim(filepath.rna, "\t",
+                         escape_double = FALSE, trim_ws = TRUE,
                          col_types = cols(), progress = FALSE)
   if(!is.null(genes)) {
-    rna.data <- rna.data %>% filter(sample %in% genes)
+    rna.data <- rna.data %>%
+      dplyr::filter(sample %in% genes)
   }
   rna.data <- transpose.data(rna.data)
-  colnames(rna.data)[2:ncol(rna.data)] <- sapply(colnames(rna.data)[2:ncol(rna.data)], 
+  colnames(rna.data)[2:ncol(rna.data)] <- sapply(colnames(rna.data)[2:ncol(rna.data)],
                                                  function(x) paste(x,'.rna',sep=''))
   return(rna.data)
 }
@@ -80,14 +78,15 @@ load.cnv <- function(cancer, data.dir, genes = NULL, file = NULL) {
   } else {
     filepath.cnv <- file.path(data.dir, file)
   }
-  cnv.data <- read_delim(filepath.cnv, "\t",
+  cnv.data <- readr::read_delim(filepath.cnv, "\t",
                          escape_double=FALSE, trim_ws=TRUE,
                          col_types = cols(), progress=FALSE)
   if(!is.null(genes)) {
-    cnv.data <- cnv.data %>% filter(`Gene Symbol` %in% genes)
+    cnv.data <- cnv.data %>%
+      dplyr::filter(`Gene Symbol` %in% genes)
   }
   cnv.data <- transpose.data(cnv.data)
-  colnames(cnv.data)[2:ncol(cnv.data)] <- sapply(colnames(cnv.data)[2:ncol(cnv.data)], 
+  colnames(cnv.data)[2:ncol(cnv.data)] <- sapply(colnames(cnv.data)[2:ncol(cnv.data)],
                                                  function(x) paste(x,'.cnv',sep=''))
   return(cnv.data)
 }
@@ -108,27 +107,26 @@ load.cnv <- function(cancer, data.dir, genes = NULL, file = NULL) {
 #' @export
 #'
 #' @examples
-load.cohort <- function(cancer, data.dir, genes = NULL, include.cnv = TRUE, 
+load.cohort <- function(cancer, data.dir, genes = NULL, include.cnv = TRUE,
                         include.rna = TRUE, file = NULL) {
   if (is.null(file)) {
     filepath.clinical <- file.path(data.dir, sprintf(DEFAULT.CLINICAL.FILENAME, cancer, cancer))
   } else {
     filepath.clinical <- file.path(data.dir, file)
   }
-  cohort <- read_delim(filepath.clinical, "\t", escape_double = FALSE,
-                       trim_ws = TRUE, 
-                       col_types = cols(), 
-                       progress = FALSE)
+  cohort <- readr::read_delim(filepath.clinical, "\t", escape_double = FALSE,
+                       trim_ws = TRUE, col_types = cols(), progress = FALSE)
   if(include.rna) {
     rna.data <- load.rnaseq(cancer, data.dir, genes)
-    cohort <- inner_join(cohort, rna.data, by=c('sampleID'))
+    cohort <- dplyr::inner_join(cohort, rna.data, by=c('sampleID'))
   }
   if (include.cnv) {
     cnv.data <- load.cnv(cancer, data.dir, genes)
-    cohort <- inner_join(cohort, cnv.data, by=c('sampleID'))
+    cohort <- dplyr::inner_join(cohort, cnv.data, by=c('sampleID'))
   }
-  cohort <- cohort %>% filter(sample_type != 'Solid Tissue Normal')
-  cohort <- drop_na(cohort, `OS`, `OS.time`)
+  cohort <- cohort %>%
+    dplyr::filter(sample_type != 'Solid Tissue Normal') %>%
+    tidyr::drop_na(`OS`, `OS.time`)
   return(cohort)
 }
 
@@ -145,10 +143,12 @@ load.cohort <- function(cancer, data.dir, genes = NULL, include.cnv = TRUE,
 #' @examples
 load.cohorts <- function(cancers, data.dir, genes) {
   df <- data.frame()
+  gene.cols <- c(paste(genes, ".rna", sep=""), paste(genes, ".cnv", sep=""))
   for(cancer in cancers) {
     current.df <- load.cohort(cancer, data.dir, genes, include.cnv = T, include.rna = T)
     current.df$cohort <- rep(cancer, dim(current.df)[1])
-    df <- bind_rows(df, select(current.df, sampleID, cohort, C2orf54.rna, C2orf54.cnv, RET.rna, RET.cnv))
+    df <- dplyr::bind_rows(df, dplyr::select(current.df, sampleID,
+                                             cohort, gene.cols))
   }
   return(df)
 }
