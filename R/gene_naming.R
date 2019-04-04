@@ -1,8 +1,13 @@
-# Returns vector of "correct names"
-checkGenes <- function(original.symbol, chromosome) {
-  mapping <- readr::read_delim("~/Bmisc/results.txt", "\t",
-                               escape_double = FALSE,
-                               trim_ws = TRUE, progress = F)
+#' Correct old or Excel damaged HGNC symbols
+#'
+#' @param original.symbol gene symbols to check
+#' @param chromosome chromosomes for each gene symbol
+#'
+#' @return vector of predicted gene names based on chromosome info
+#' @export
+#'
+check.genes <- function(original.symbol, chromosome) {
+  mapping <- hgnc_symbol_info
   chromosome.number <- as.integer(stringr::str_extract(chromosome, "([0-9])+"))
   gene.report <- HGNChelper::checkGeneSymbols(original.symbol)
   gene.report$original.chromosome <- chromosome.number

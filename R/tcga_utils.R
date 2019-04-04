@@ -19,7 +19,6 @@ DEFAULT.CLINICAL.FILENAME <- 'TCGA.%s.sampleMap__%s_clinicalMatrix.gz'
 #' @return Dataframe where each row is a patient and each column is some type of TCGA variable
 #' @export
 #'
-#' @examples
 transpose.data <- function(df) {
   temp <- data.frame(t(df[-1]))
   colnames(df)[1] <- 'Gene Symbol'
@@ -40,7 +39,6 @@ transpose.data <- function(df) {
 #' the expression for that gene
 #' @export
 #'
-#' @examples
 load.rnaseq <- function(cancer, data.dir, genes = NULL, file = NULL) {
   if (is.null(file)) {
     filepath.rna <- file.path(data.dir, sprintf(DEFAULT.RNASEQ.FILENAME, cancer))
@@ -71,7 +69,6 @@ load.rnaseq <- function(cancer, data.dir, genes = NULL, file = NULL) {
 #' the Gistic2 score for that gene
 #' @export
 #'
-#' @examples
 load.cnv <- function(cancer, data.dir, genes = NULL, file = NULL) {
   if (is.null(file)) {
     filepath.cnv <- file.path(data.dir, sprintf(DEFAULT.CNV.FILENAME, cancer))
@@ -106,7 +103,6 @@ load.cnv <- function(cancer, data.dir, genes = NULL, file = NULL) {
 #' data. Solid Tissue Normal samples are not included.
 #' @export
 #'
-#' @examples
 load.cohort <- function(cancer, data.dir, genes = NULL, include.cnv = TRUE,
                         include.rna = TRUE, file = NULL) {
   if (is.null(file)) {
@@ -140,7 +136,6 @@ load.cohort <- function(cancer, data.dir, genes = NULL, include.cnv = TRUE,
 #' cnv data. The `cohort`` column contains the TCGA study each patient belongs to.
 #' @export
 #'
-#' @examples
 load.cohorts <- function(cancers, data.dir, genes) {
   df <- data.frame()
   gene.cols <- c(paste(genes, ".rna", sep=""), paste(genes, ".cnv", sep=""))
