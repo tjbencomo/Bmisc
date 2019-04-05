@@ -11,7 +11,7 @@ check.genes <- function(original.symbol, chromosome) {
   chromosome.number <- as.integer(stringr::str_extract(chromosome, "([0-9])+"))
   gene.report <- HGNChelper::checkGeneSymbols(original.symbol)
   gene.report$original.chromosome <- chromosome.number
-
+  print(gene.report)
   results <- gene.report %>%
     dplyr::distinct(x, Suggested.Symbol, original.chromosome) %>%
     tidyr::separate_rows(Suggested.Symbol, sep = " /// ") %>%
@@ -20,9 +20,9 @@ check.genes <- function(original.symbol, chromosome) {
     dplyr::group_by(x) %>%
     dplyr::filter(original.chromosome == Chromosome) %>%
     dplyr::mutate(original.chromosome =
-                    paste("chr", original.chromosome, sep='')) %>%
+                    base::paste("chr", original.chromosome, sep='')) %>%
     dplyr::distinct(x, Suggested.Symbol, original.chromosome)
-
+  print("hi2")
   # if multiple rows exist for the same original name with the same chromosome
   # it is likely the old gene got split up - best to keep old name, so discard
   # these rows
