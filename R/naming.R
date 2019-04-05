@@ -11,7 +11,7 @@ check.genes <- function(original.symbol, chromosome) {
   chromosome.number <- as.integer(stringr::str_extract(chromosome, "([0-9])+"))
   gene.report <- HGNChelper::checkGeneSymbols(original.symbol)
   gene.report$original.chromosome <- chromosome.number
-  print(gene.report)
+  
   results <- gene.report %>%
     dplyr::distinct(x, Suggested.Symbol, original.chromosome) %>%
     tidyr::separate_rows(Suggested.Symbol, sep = " /// ") %>%
