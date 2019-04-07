@@ -1,3 +1,3 @@
 # TBmisc
-My personal utilities package with various helper functions. `tcga_utils.R` makes it easy to load CNV, RNASeq, or clinical data from UCSC Xena into analysis ready dataframes. 
-
+A package containing utility functions I've written to help work with biomedical data.
+Currently includes functions for easily loading TCGA data and handling incorrect gene names. 
