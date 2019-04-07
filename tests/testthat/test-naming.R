@@ -22,7 +22,7 @@ test_that("No name is recommended if no chromosome info", {
   expect_equal("TP53", check_genes("TP53", NA))
 })
 
-test_that("Gibberish names aren't corrected", {
+test_that("Gibberish symbols aren't corrected", {
   expect_equal("asdf", check_genes("asdf", NA))
   expect_equal("asdf", check_genes("asdf", "chr1"))
 
