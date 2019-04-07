@@ -2,8 +2,8 @@
 
 export("%>%")
 export(check_genes)
-export(load.cnv)
-export(load.cohort)
-export(load.cohorts)
-export(load.rnaseq)
+export(load_cnv)
+export(load_cohort)
+export(load_cohorts)
+export(load_rnaseq)
 importFrom(magrittr,"%>%")
