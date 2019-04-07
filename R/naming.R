@@ -6,12 +6,14 @@
 #' @return vector of predicted gene names based on chromosome info
 #' @export
 #'
-check.genes <- function(original.symbol, chromosome) {
+check_genes <- function(original.symbol, chromosome) {
   mapping <- hgnc_symbol_info
-  chromosome.number <- as.integer(stringr::str_extract(chromosome, "([0-9])+"))
+  chromosome.number <- stringr::str_remove(chromosome, "chr")
+  print(chromosome.number)
+  chromosome.number[chromosome.number == "M"] <- "mitochondria"
   gene.report <- HGNChelper::checkGeneSymbols(original.symbol)
   gene.report$original.chromosome <- chromosome.number
-  
+
   results <- gene.report %>%
     dplyr::distinct(x, Suggested.Symbol, original.chromosome) %>%
     tidyr::separate_rows(Suggested.Symbol, sep = " /// ") %>%
@@ -19,10 +21,13 @@ check.genes <- function(original.symbol, chromosome) {
                      by = c("Suggested.Symbol" = "Approved symbol")) %>%
     dplyr::group_by(x) %>%
     dplyr::filter(original.chromosome == Chromosome) %>%
-    dplyr::mutate(original.chromosome =
-                    base::paste("chr", original.chromosome, sep='')) %>%
+    dplyr::mutate(original.chromosome = dplyr::case_when(
+      original.chromosome == "mitochondria" ~ "chrM",
+      original.chromosome != "mitochondria" ~
+        stringr::str_c("chr", original.chromosome, sep = "")
+    )) %>%
     dplyr::distinct(x, Suggested.Symbol, original.chromosome)
-  print("hi2")
+
   # if multiple rows exist for the same original name with the same chromosome
   # it is likely the old gene got split up - best to keep old name, so discard
   # these rows
