@@ -9,7 +9,6 @@
 check_genes <- function(original.symbol, chromosome) {
   mapping <- hgnc_symbol_info
   chromosome.number <- stringr::str_remove(chromosome, "chr")
-  print(chromosome.number)
   chromosome.number[chromosome.number == "M"] <- "mitochondria"
   gene.report <- HGNChelper::checkGeneSymbols(original.symbol)
   gene.report$original.chromosome <- chromosome.number

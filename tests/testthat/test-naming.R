@@ -16,3 +16,14 @@ test_that("Mitochondrial genes work", {
   expect_equal("IVNS1ABP", check_genes("ND1", "chr1"))
   expect_equal("ND1", check_genes("ND1", NA))
 })
+
+test_that("No name is recommended if no chromosome info", {
+  expect_equal("2-Mar", check_genes("2-Mar", NA))
+  expect_equal("TP53", check_genes("TP53", NA))
+})
+
+test_that("Gibberish names aren't corrected", {
+  expect_equal("asdf", check_genes("asdf", NA))
+  expect_equal("asdf", check_genes("asdf", "chr1"))
+
+})
