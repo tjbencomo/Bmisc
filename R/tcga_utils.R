@@ -21,7 +21,8 @@ DEFAULT.CLINICAL.FILENAME <- 'TCGA.%s.sampleMap__%s_clinicalMatrix.gz'
 transpose_data <- function(df) {
   temp <- data.frame(t(df[-1]))
   colnames(df)[1] <- 'Gene Symbol'
-  colnames(temp) <- df %>% pull(`Gene Symbol`)
+  colnames(temp) <- df %>%
+    dplyr::pull(`Gene Symbol`)
   data.table::setDT(temp, keep.rownames = TRUE)
   colnames(temp)[1] <- "sampleID"
   return(temp)
@@ -46,7 +47,7 @@ load_rnaseq <- function(cancer, data.dir, genes = NULL, file = NULL) {
   }
   rna.data <- readr::read_delim(filepath.rna, "\t",
                          escape_double = FALSE, trim_ws = TRUE,
-                         col_types = cols(), progress = FALSE)
+                         col_types = readr::cols(), progress = FALSE)
   if(!is.null(genes)) {
     rna.data <- rna.data %>%
       dplyr::filter(sample %in% genes)
@@ -76,7 +77,7 @@ load_cnv <- function(cancer, data.dir, genes = NULL, file = NULL) {
   }
   cnv.data <- readr::read_delim(filepath.cnv, "\t",
                          escape_double=FALSE, trim_ws=TRUE,
-                         col_types = cols(), progress=FALSE)
+                         col_types = readr::cols(), progress=FALSE)
   if(!is.null(genes)) {
     cnv.data <- cnv.data %>%
       dplyr::filter(`Gene Symbol` %in% genes)
@@ -110,7 +111,7 @@ load_cohort <- function(cancer, data.dir, genes = NULL, include.cnv = TRUE,
     filepath.clinical <- file.path(data.dir, file)
   }
   cohort <- readr::read_delim(filepath.clinical, "\t", escape_double = FALSE,
-                       trim_ws = TRUE, col_types = cols(), progress = FALSE)
+                       trim_ws = TRUE, col_types = readr::cols(), progress = FALSE)
   if(include.rna) {
     rna.data <- load_rnaseq(cancer, data.dir, genes)
     cohort <- dplyr::inner_join(cohort, rna.data, by=c('sampleID'))
