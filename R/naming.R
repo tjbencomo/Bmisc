@@ -53,3 +53,64 @@ check_genes <- function(original.symbol, chromosome) {
     dplyr::pull(predicted.symbol)
   return(report)
 }
+
+#' Extract Amino Acid Variant
+#'
+#' @param aachange string containing protein sequence variant
+#' @param type string indicating whether to extract the reference or alternate
+#' variant. Use 'ref' to indicate reference and 'alt' to indicate the alternate
+#' variant.
+#'
+#' @return amino acid variant specified by type
+#' @export
+#'
+extract_aa <- function(aachange, type) {
+  reference.types <- c("reference", "ref")
+  alt.types <- c("mutated", "mut", "alternate", "alt")
+  if (type %in% reference.types) {
+    index = 1
+  } else if (type %in% alt.types) {
+    index = 2
+  } else {
+    print("Bad type!")
+    return(NA)
+  }
+  results <- stringr::str_extract_all(aachange, '[A-Z]+', simplify = T)
+  if(dim(results)[2] == 0) {
+    return(rep(NA, dim(results)[1]))
+  }
+  results <- results[, index]
+  ifelse(results == "", NA, results)
+}
+
+#' Extract Amino Acid Variant Position
+#'
+#' @param aachange string containing protein sequence variant
+#'
+#' @return amino acid variant's position
+#' @export
+#'
+extract_position <- function(aachange) {
+  results <- stringr::str_extract(aachange, '[0-9]+')
+  ifelse(results == "", NA, results)
+}
+
+#' Split protein sequence variant column into individual columns
+#' Divides column containing protein sequence variants into unique reference,
+#' position, and variant columns.
+#'
+#' @param df dataframe with protein sequence variant column
+#' @param column name of the column to split in df
+#'
+#' @return updated df with reference_aa, position_aa, and alternate_aa columns
+#' @export
+#'
+split_aachange <- function(df, column = "aachange") {
+  aachanges <- df[, column]
+  ref_aa <- extract_aa(aachanges, type = "ref")
+  position <- extract_position(aachanges)
+  alt_aa <- extract_aa(aachanges, type = "alt")
+  return(tibble::add_column(df, reference_aa = ref_aa,
+                            position_aa = position,
+                            alternate_aa = alt_aa))
+}

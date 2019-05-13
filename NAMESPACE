@@ -2,8 +2,11 @@
 
 export("%>%")
 export(check_genes)
+export(extract_aa)
+export(extract_position)
 export(load_cnv)
 export(load_cohort)
 export(load_cohorts)
 export(load_rnaseq)
+export(split_aachange)
 importFrom(magrittr,"%>%")

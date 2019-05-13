@@ -27,3 +27,21 @@ test_that("Gibberish symbols aren't corrected", {
   expect_equal("asdf", check_genes("asdf", "chr1"))
 
 })
+
+test_that("Amino acid extraction works on normal variant", {
+  expect_equal("A", extract_aa("p.A430T", type = "ref"))
+  expect_equal("T", extract_aa("p.A430T", type = "alt"))
+  expect_equal("430", extract_position("p.A430T"))
+  expect_equal(c("430", "367"), extract_position(c("p.A430T", "p.K367L")))
+  expect_equal(c("A", "K"), extract_aa(c("p.A430T", "p.K367L"), type = "ref"))
+  expect_equal(c("T", "L"), extract_aa(c("p.A430T", "p.K367L"), type = "alt"))
+})
+
+test_that("NAs returned on empty protein sequence variants", {
+  expect_equal(NA, extract_aa("p.-", type = "ref"))
+  expect_equal(NA, extract_aa("p.-", type = "alt"))
+  expect_equal(NA, extract_aa(".", type = "ref"))
+  expect_equal(NA, extract_aa(".", type = "ref"))
+  expect_equal(c(NA, NA), extract_aa(c(".", "p.-"), type = "alt"))
+  expect_equal(c(NA, NA), extract_position(c(".", "p.-")))
+})
