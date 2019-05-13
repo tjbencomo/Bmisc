@@ -35,6 +35,8 @@ test_that("Amino acid extraction works on normal variant", {
   expect_equal(c("430", "367"), extract_position(c("p.A430T", "p.K367L")))
   expect_equal(c("A", "K"), extract_aa(c("p.A430T", "p.K367L"), type = "ref"))
   expect_equal(c("T", "L"), extract_aa(c("p.A430T", "p.K367L"), type = "alt"))
+  expect_equal("Arg", extract_aa("p.Arg430Tyr", type = "ref"))
+  expect_equal("Tyr", extract_aa("p.Arg430Tyr", type = "alt"))
 })
 
 test_that("Extraction works for frameshift variants", {

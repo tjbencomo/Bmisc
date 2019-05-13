@@ -75,7 +75,7 @@ extract_aa <- function(aachange, type) {
     print("Bad type!")
     return(NA)
   }
-  results <- stringr::str_extract_all(aachange, '([A-Z]+|\\*|fs|del)', simplify = T)
+  results <- stringr::str_extract_all(aachange, '([A-Z]+[a-z]*|\\*|fs|del)', simplify = T)
   if(dim(results)[2] == 0 || (dim(results)[2] < 2 && index == 2)) {
     return(rep(NA, dim(results)[1]))
   }
