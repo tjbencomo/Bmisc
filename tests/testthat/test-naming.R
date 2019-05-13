@@ -37,6 +37,16 @@ test_that("Amino acid extraction works on normal variant", {
   expect_equal(c("T", "L"), extract_aa(c("p.A430T", "p.K367L"), type = "alt"))
 })
 
+test_that("Extraction works for frameshift variants", {
+  expect_equal("del", extract_aa("p.365_365del", type = "ref"))
+  expect_equal("365_365", extract_position("p.365_365del"))
+  expect_equal(NA, extract_aa("p.365_365del", type = "alt"))
+  expect_equal("Q", extract_aa("p.Q357fs", type = "ref"))
+  expect_equal("357", extract_position("p.Q357fs"))
+  expect_equal("fs", extract_aa("p.Q357fs", type = "alt"))
+
+})
+
 test_that("NAs returned on empty protein sequence variants", {
   expect_equal(NA, extract_aa("p.-", type = "ref"))
   expect_equal(NA, extract_aa("p.-", type = "alt"))

@@ -75,12 +75,12 @@ extract_aa <- function(aachange, type) {
     print("Bad type!")
     return(NA)
   }
-  results <- stringr::str_extract_all(aachange, '[A-Z]+', simplify = T)
-  if(dim(results)[2] == 0) {
+  results <- stringr::str_extract_all(aachange, '([A-Z]+|\\*|fs|del)', simplify = T)
+  if(dim(results)[2] == 0 || (dim(results)[2] < 2 && index == 2)) {
     return(rep(NA, dim(results)[1]))
   }
   results <- results[, index]
-  ifelse(results == "", NA, results)
+  ifelse(results == "" | results == "UNKNOWN", NA, results)
 }
 
 #' Extract Amino Acid Variant Position
@@ -91,7 +91,7 @@ extract_aa <- function(aachange, type) {
 #' @export
 #'
 extract_position <- function(aachange) {
-  results <- stringr::str_extract(aachange, '[0-9]+')
+  results <- stringr::str_extract(aachange, '[0-9]+_[0-9]+|[0-9]+')
   ifelse(results == "", NA, results)
 }
 
@@ -106,7 +106,7 @@ extract_position <- function(aachange) {
 #' @export
 #'
 split_aachange <- function(df, column = "aachange") {
-  aachanges <- df[, column]
+  aachanges <- df[[column]]
   ref_aa <- extract_aa(aachanges, type = "ref")
   position <- extract_position(aachanges)
   alt_aa <- extract_aa(aachanges, type = "alt")
